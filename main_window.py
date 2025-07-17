@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QTableWidget,
-                               QTableWidgetItem, QMessageBox)
-from PySide6.QtCore import Qt
+                               QTableWidgetItem, QMessageBox, QDialog)
+
+from add_task_dialog import AddTaskDialog
 from model import TaskManager, Task
 from datetime import date
 
@@ -53,8 +54,11 @@ class MainWindow(QMainWindow):
             self.table.setItem(row, 2, QTableWidgetItem("✔" if task.done else "✗"))
 
     def add_task(self):
-        self.manager.add_task(Task("Новая задача", "Описание", date.today()))
-        self.refresh_table()
+        dialog = AddTaskDialog(self)
+        if dialog.exec() == QDialog.Accepted:
+            task = dialog.get_task()
+            self.manager.add_task(task)
+            self.refresh_table()
 
     def remove_task(self):
         row = self.table.currentRow()
