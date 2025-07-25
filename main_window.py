@@ -2,6 +2,7 @@ from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QPushButton, Q
                                QTableWidgetItem, QMessageBox, QDialog)
 
 from add_task_dialog import AddTaskDialog
+from edit_task_dialog import EditTaskDialog
 from model import TaskManager, Task
 from datetime import date
 
@@ -21,10 +22,12 @@ class MainWindow(QMainWindow):
         self.table.setHorizontalHeaderLabels(["Название", "Дедлайн", "Выполнено"])
 
         self.add_button = QPushButton("Добавить задачу")
+        self.edit_button = QPushButton("Редактировать")
         self.remove_button = QPushButton("Удалить")
         self.save_button = QPushButton("Сохранить")
 
         self.add_button.clicked.connect(self.add_task)
+        self.edit_button.clicked.connect(self.edit_task)
         self.remove_button.clicked.connect(self.remove_task)
         self.save_button.clicked.connect(self.save_tasks)
 
@@ -58,6 +61,13 @@ class MainWindow(QMainWindow):
         if dialog.exec() == QDialog.Accepted:
             task = dialog.get_task()
             self.manager.add_task(task)
+            self.refresh_table()
+
+    def edit_task(self):
+        dialog = EditTaskDialog(self)
+        if dialog.exec() == QDialog.Accepted:
+            task = dialog.get_task()
+            self.manager.edit_task(task)
             self.refresh_table()
 
     def remove_task(self):
